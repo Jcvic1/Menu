@@ -1,3 +1,4 @@
+from typing import List
 from pydantic import BaseModel
 
 # Dish Schema
@@ -44,7 +45,7 @@ class SubMenuUpdate(SubMenuBase):
 class SubMenu(SubMenuBase):
     id: str
     menu_id: str
-    dishes: list[Dish] = []  # type: ignore
+    dishes: List[Dish] = []  # type: ignore
 
     class Config:
         orm_mode = True
@@ -72,7 +73,7 @@ class MenuUpdate(MenuBase):
 
 class Menu(MenuBase):
     id: str
-    submenus: list[SubMenu] = []  # type: ignore
+    submenus: List[SubMenu] = []  # type: ignore
 
     class Config:
         orm_mode = True

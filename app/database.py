@@ -12,8 +12,6 @@ POSTGRES_URL = (
 )
 
 
-# POSTGRES_URL=f"postgresql://Jcvic1:16pUqGAJwrCt@ep-shy-mountain-213281-pooler.eu-central-1.aws.neon.tech/test?options=endpoint%3Dep-shy-mountain-213281"
-
 engine = create_engine(POSTGRES_URL, echo=True, pool_size=10, max_overflow=20)
 
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

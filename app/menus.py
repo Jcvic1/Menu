@@ -1,6 +1,6 @@
+from typing import List
 from fastapi import APIRouter, Depends
 
-# from fastapi_redis_cache import cache
 from fastapi_cache.decorator import cache
 from sqlalchemy.orm import Session
 
@@ -26,11 +26,22 @@ def create_menu(item_schema: schemas.MenuCreate, db: Session = Depends(get_db)) 
     return new_menu
 
 
-@router.get('/menus/', name='get_menus', response_model=list[schemas.MenuReponse])  # type: ignore
-@cache(expire=60)
+@router.get('/menus/', name='get_menus', response_model=List[schemas.MenuReponse])  # type: ignore
+# @cache(expire=60)
 def read_menus(
     db: Session = Depends(get_db), limit: int = 10, page: int = 1, search: str = ''
-) -> list[Menu]:  # type: ignore
+) -> List[Menu]:  # type: ignore
+    menus = menu_crud.read_items(db=db, limit=limit, page=page, search=search)
+    for menu in menus:
+        menu.submenus_count = len(menu.submenus)
+        menu.dishes_count = sum(len(submenu.dishes) for submenu in menu.submenus)
+    return menus
+
+@router.get('/menus/', name='get_menus', response_model=List[schemas.MenuReponse])  # type: ignore
+# @cache(expire=60)
+def read_menus(
+    db: Session = Depends(get_db), limit: int = 10, page: int = 1, search: str = ''
+) -> List[Menu]:  # type: ignore
     menus = menu_crud.read_items(db=db, limit=limit, page=page, search=search)
     for menu in menus:
         menu.submenus_count = len(menu.submenus)
@@ -39,7 +50,7 @@ def read_menus(
 
 
 @router.get('/menus/{menu_id}', name='get_menu', response_model=schemas.MenuReponse)
-@cache(expire=60)
+# @cache(expire=60)
 async def read_menu(menu_id: int, db: Session = Depends(get_db)):
     menu = menu_crud.read_item(db=db, menu_id=menu_id)
 
@@ -94,12 +105,12 @@ async def create_submenu(
 @router.get(
     '/menus/{menu_id}/submenus',
     name='get_submenus',
-    response_model=list[schemas.SubMenuReponse]  # type: ignore
+    response_model=List[schemas.SubMenuReponse]  # type: ignore
 )
-@cache(expire=60)
+# @cache(expire=60)
 async def read_submenus(
     db: Session = Depends(get_db), limit: int = 10, page: int = 1, search: str = ''
-) -> list[SubMenu]:  # type: ignore
+) -> List[SubMenu]:  # type: ignore
     submenus = submenu_crud.read_items(db=db, limit=limit, page=page, search=search)
     for submenu in submenus:
         submenu.dishes_count = len(submenu.dishes)
@@ -111,7 +122,7 @@ async def read_submenus(
     name='get_submenu',
     response_model=schemas.SubMenuReponse,
 )
-@cache(expire=60)
+# @cache(expire=60)
 async def read_submenu(
     menu_id: int, submenu_id: int, db: Session = Depends(get_db)
 ) -> SubMenu:
@@ -175,12 +186,12 @@ async def create_dish(
 @router.get(
     '/menus/{menu_id}/submenus/{submenu_id}/dishes/',
     name='get_dishes',
-    response_model=list[schemas.Dish],  # type: ignore
+    response_model=List[schemas.Dish],  # type: ignore
 )
-@cache(expire=60)
+# @cache(expire=60)
 async def read_dishes(
     db: Session = Depends(get_db), limit: int = 10, page: int = 1, search: str = ''
-) -> list[Dish]:  # type: ignore
+) -> List[Dish]:  # type: ignore
     dishes = dish_crud.read_items(db=db, limit=limit, page=page, search=search)
     return dishes
 
@@ -190,7 +201,7 @@ async def read_dishes(
     name='get_dish',
     response_model=schemas.Dish,
 )
-@cache(expire=60)
+# @cache(expire=60)
 async def read_dish(
     menu_id: int, submenu_id: int, dish_id: int, db: Session = Depends(get_db)
 ) -> Dish:
