@@ -1,14 +1,8 @@
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy.orm import sessionmaker
-
-from fastapi_cache import FastAPICache
-from fastapi_cache.backends.redis import RedisBackend
-from redis import asyncio as aioredis  # type ignore
 from app.database import Base, engine
 from app.main import app
-from app.config import settings
-
 
 
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False,
@@ -31,14 +25,7 @@ def db():
         db.close()
 
 
-@app.on_event('startup')
-async def startup():
-    redis = aioredis.from_url(
-        f'redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}/{settings.REDIS_DB}', encoding='utf8', decode_responses=True)
-    FastAPICache.init(RedisBackend(redis), prefix='fastapi-cache')
 client = TestClient(app)
-
-
 
 menu_data = {'title': 'Sample Menu 1', 'description': 'Menu Description 1'}
 
@@ -166,7 +153,7 @@ def test_create_dish():
     dish_id = dish_list[0]['id']
 
     response = client.delete(
-        app.url_path_for( 'delete_dish', menu_id=menu_id, submenu_id=submenu_id, dish_id=dish_id)
+        app.url_path_for('delete_dish', menu_id=menu_id, submenu_id=submenu_id, dish_id=dish_id)
     )
 
 
@@ -213,7 +200,7 @@ def test_read_dish():
     assert 'id' in response.json()
 
     response = client.get(
-        app.url_path_for( 'get_dishes', menu_id=menu_id, submenu_id=submenu_id))
+        app.url_path_for('get_dishes', menu_id=menu_id, submenu_id=submenu_id))
     assert response.status_code == 200
     dish_list = response.json()
 

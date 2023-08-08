@@ -24,8 +24,6 @@ def db():
 client = TestClient(app)
 
 
-
-
 # MENU CRUD
 
 

@@ -1,7 +1,6 @@
 from typing import List
 from fastapi import APIRouter, Depends
 
-from fastapi_cache.decorator import cache
 from sqlalchemy.orm import Session
 
 from app import schemas
@@ -25,17 +24,6 @@ def create_menu(item_schema: schemas.MenuCreate, db: Session = Depends(get_db)) 
     new_menu = menu_crud.create_item(db=db, item_schema=item_schema)
     return new_menu
 
-
-@router.get('/menus/', name='get_menus', response_model=List[schemas.MenuReponse])  # type: ignore
-# @cache(expire=60)
-def read_menus(
-    db: Session = Depends(get_db), limit: int = 10, page: int = 1, search: str = ''
-) -> List[Menu]:  # type: ignore
-    menus = menu_crud.read_items(db=db, limit=limit, page=page, search=search)
-    for menu in menus:
-        menu.submenus_count = len(menu.submenus)
-        menu.dishes_count = sum(len(submenu.dishes) for submenu in menu.submenus)
-    return menus
 
 @router.get('/menus/', name='get_menus', response_model=List[schemas.MenuReponse])  # type: ignore
 # @cache(expire=60)

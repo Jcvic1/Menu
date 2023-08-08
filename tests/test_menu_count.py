@@ -23,11 +23,7 @@ def db():
 
 client = TestClient(app)
 
-
-
 menu_data = {'title': 'Sample Menu 1', 'description': 'Menu Description 1'}
-
-
 
 submenu_datas = [
     {'title': 'Sample SubMenu 1',
@@ -83,12 +79,14 @@ def get_menu_id():
     menu_list = response.json()
     return menu_list[0]['id']
 
+
 def get_submenu_id():
     menu_id = get_menu_id()
     response = client.get(app.url_path_for("get_submenus", menu_id=menu_id))
     assert response.status_code == 200
     submenu_list = response.json()
     return submenu_list[3]['id']
+
 
 def test_count_submenus():
     response = client.post(app.url_path_for("post_menu"), json=menu_data)
@@ -112,6 +110,7 @@ def test_count_submenus():
     submenu_count = len(menu['submenus'])
 
     assert submenu_count == len(submenu_datas)
+
 
 def test_count_dishes():
     menu_id = get_menu_id()

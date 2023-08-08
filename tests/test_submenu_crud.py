@@ -73,7 +73,6 @@ update_submenu_datas = [
 ]
 
 
-
 def get_menu_id():
     response = client.get(app.url_path_for('get_menus'))
     assert response.status_code == 200
