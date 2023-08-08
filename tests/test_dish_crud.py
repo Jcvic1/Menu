@@ -31,11 +31,7 @@ def db():
         db.close()
 
 
-@app.on_event('startup')
-async def startup():
-    redis = aioredis.from_url(
-        f'redis://{settings.REDIS_HOST}:{settings.REDIS_PORT}/{settings.REDIS_DB}', encoding='utf8', decode_responses=True)
-    FastAPICache.init(RedisBackend(redis), prefix='fastapi-cache')
+
 client = TestClient(app)
 
 
