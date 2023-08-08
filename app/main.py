@@ -2,11 +2,12 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
-from redis import asyncio as aioredis  # type ignore
+from redis import asyncio as aioredis
 
-from app import menus, models
+from app import models
 from app.config import settings
 from app.database import engine
+from app.menu_endpoints import dish, menu, submenu
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -33,4 +34,6 @@ app.add_middleware(
 )
 
 
-app.include_router(menus.router, tags=['Menu'], prefix='/api/v1')
+app.include_router(menu.router, tags=['Menu'], prefix='/api/v1')
+app.include_router(submenu.router, tags=['Submenu'], prefix='/api/v1')
+app.include_router(dish.router, tags=['Dish'], prefix='/api/v1')
