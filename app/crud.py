@@ -1,4 +1,5 @@
 from typing import List
+
 from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
@@ -34,7 +35,7 @@ class MenuCRUD:
         limit: int = 20,
         page: int = 1,
         search: str = '',
-    ) -> List[Menu]:  # type: ignore
+    ) -> List[Menu]:
         skip = (page - 1) * limit
 
         return (
@@ -102,7 +103,7 @@ class SubmenuCRUD:
         limit: int = 20,
         page: int = 1,
         search: str = '',
-    ) -> List[SubMenu]:  # type: ignore
+    ) -> List[SubMenu]:
         skip = (page - 1) * limit
 
         return (
@@ -176,7 +177,7 @@ class DishCRUD:
         limit: int = 20,
         page: int = 1,
         search: str = '',
-    ) -> List[Dish]:  # type: ignore
+    ) -> List[Dish]:
         skip = (page - 1) * limit
         return (
             db.query(Dish)

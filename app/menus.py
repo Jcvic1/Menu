@@ -1,8 +1,8 @@
 import os
 from typing import List
+
 from fastapi import APIRouter, Depends
 from fastapi_cache.decorator import cache
-
 from sqlalchemy.orm import Session
 
 from app import schemas
@@ -14,7 +14,7 @@ router = APIRouter()
 
 
 def get_cache(expire=60):
-    if os.environ.get("MENU_ENV") == "app":
+    if os.environ.get('MENU_ENV') == 'app':
         return cache(expire=expire)
     else:
         def no_cache_decorator(func):
@@ -36,11 +36,11 @@ def create_menu(item_schema: schemas.MenuCreate, db: Session = Depends(get_db)) 
     return new_menu
 
 
-@router.get('/menus/', name='get_menus', response_model=List[schemas.MenuReponse])  # type: ignore
+@router.get('/menus/', name='get_menus', response_model=List[schemas.MenuReponse])
 @get_cache(expire=60)
 def read_menus(
     db: Session = Depends(get_db), limit: int = 10, page: int = 1, search: str = ''
-) -> List[Menu]:  # type: ignore
+) -> List[Menu]:
     menus = menu_crud.read_items(db=db, limit=limit, page=page, search=search)
     for menu in menus:
         menu.submenus_count = len(menu.submenus)
@@ -103,12 +103,12 @@ async def create_submenu(
 @router.get(
     '/menus/{menu_id}/submenus',
     name='get_submenus',
-    response_model=List[schemas.SubMenuReponse]  # type: ignore
+    response_model=List[schemas.SubMenuReponse]
 )
 @get_cache(expire=60)
 async def read_submenus(
     db: Session = Depends(get_db), limit: int = 10, page: int = 1, search: str = ''
-) -> List[SubMenu]:  # type: ignore
+) -> List[SubMenu]:
     submenus = submenu_crud.read_items(db=db, limit=limit, page=page, search=search)
     for submenu in submenus:
         submenu.dishes_count = len(submenu.dishes)
@@ -184,12 +184,12 @@ async def create_dish(
 @router.get(
     '/menus/{menu_id}/submenus/{submenu_id}/dishes/',
     name='get_dishes',
-    response_model=List[schemas.Dish],  # type: ignore
+    response_model=List[schemas.Dish],
 )
 @get_cache(expire=60)
 async def read_dishes(
     db: Session = Depends(get_db), limit: int = 10, page: int = 1, search: str = ''
-) -> List[Dish]:  # type: ignore
+) -> List[Dish]:
     dishes = dish_crud.read_items(db=db, limit=limit, page=page, search=search)
     return dishes
 
