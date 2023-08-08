@@ -8,7 +8,6 @@ services:
       - ./.env.test
     depends_on:
       - postgres_test
-      - redis_test
 
   postgres_test:
     image: postgres:latest
@@ -19,13 +18,5 @@ services:
     volumes:
       - postgres_test_data:/var/lib/postgresql/data
 
-  redis_test:
-    image: redis:latest
-    ports:
-      - '7379:6379'
-    volumes:
-      - redis_test_data:/data
-
 volumes:
   postgres_test_data:
-  redis_test_data:

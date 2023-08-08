@@ -12,6 +12,3 @@ DATABASE_PORT=5432 POSTGRES_USER={POSTGRES_USER} POSTGRES_PASSWORD={POSTGRES_PAS
 
 Run docker-compose -f docker-compose-app.yml up --build to start app.
 Run docker-compose -f docker-compose-test.yml up --build to start test.
-
-uncomment @cache(expire=60) in app/menus.py to use cache  
-N/B @cache(expire=60) currently is not working with pytest, run pytest without cache

@@ -1,5 +1,7 @@
+import os
 from typing import List
 from fastapi import APIRouter, Depends
+from fastapi_cache.decorator import cache
 
 from sqlalchemy.orm import Session
 
@@ -9,6 +11,15 @@ from app.database import get_db
 from app.models import Dish, Menu, SubMenu
 
 router = APIRouter()
+
+
+def get_cache(expire=60):
+    if os.environ.get("MENU_ENV") == "app":
+        return cache(expire=expire)
+    else:
+        def no_cache_decorator(func):
+            return func
+        return no_cache_decorator
 
 
 menu_crud = MenuCRUD()
@@ -26,7 +37,7 @@ def create_menu(item_schema: schemas.MenuCreate, db: Session = Depends(get_db)) 
 
 
 @router.get('/menus/', name='get_menus', response_model=List[schemas.MenuReponse])  # type: ignore
-# @cache(expire=60)
+@get_cache(expire=60)
 def read_menus(
     db: Session = Depends(get_db), limit: int = 10, page: int = 1, search: str = ''
 ) -> List[Menu]:  # type: ignore
@@ -38,7 +49,7 @@ def read_menus(
 
 
 @router.get('/menus/{menu_id}', name='get_menu', response_model=schemas.MenuReponse)
-# @cache(expire=60)
+@get_cache(expire=60)
 async def read_menu(menu_id: int, db: Session = Depends(get_db)):
     menu = menu_crud.read_item(db=db, menu_id=menu_id)
 
@@ -63,7 +74,6 @@ async def update_menu(
 
 @router.delete('/menus/{menu_id}', name='delete_menu')
 async def delete_menu(menu_id: int, db: Session = Depends(get_db)) -> None:
-    # redis_client.delete(get_cache_key("GET", "{routers}/menus/"))
     return menu_crud.delete_item(
         db=db,
         item_id=menu_id,
@@ -95,7 +105,7 @@ async def create_submenu(
     name='get_submenus',
     response_model=List[schemas.SubMenuReponse]  # type: ignore
 )
-# @cache(expire=60)
+@get_cache(expire=60)
 async def read_submenus(
     db: Session = Depends(get_db), limit: int = 10, page: int = 1, search: str = ''
 ) -> List[SubMenu]:  # type: ignore
@@ -110,7 +120,7 @@ async def read_submenus(
     name='get_submenu',
     response_model=schemas.SubMenuReponse,
 )
-# @cache(expire=60)
+@get_cache(expire=60)
 async def read_submenu(
     menu_id: int, submenu_id: int, db: Session = Depends(get_db)
 ) -> SubMenu:
@@ -176,7 +186,7 @@ async def create_dish(
     name='get_dishes',
     response_model=List[schemas.Dish],  # type: ignore
 )
-# @cache(expire=60)
+@get_cache(expire=60)
 async def read_dishes(
     db: Session = Depends(get_db), limit: int = 10, page: int = 1, search: str = ''
 ) -> List[Dish]:  # type: ignore
@@ -189,7 +199,7 @@ async def read_dishes(
     name='get_dish',
     response_model=schemas.Dish,
 )
-# @cache(expire=60)
+@get_cache(expire=60)
 async def read_dish(
     menu_id: int, submenu_id: int, dish_id: int, db: Session = Depends(get_db)
 ) -> Dish:

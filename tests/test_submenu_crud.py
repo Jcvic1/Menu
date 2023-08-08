@@ -26,8 +26,6 @@ def db():
 
 client = TestClient(app)
 
-prefix = 'api/v1'
-
 
 # SUBMENU CRUD
 

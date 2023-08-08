@@ -14,11 +14,13 @@ RUN apt-get update \
 # Set the working directory in the container
 WORKDIR /test
 
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+
 # Install Python dependencies for testing and the application
 COPY ./app /test/app
 COPY ./tests /test/tests
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
 
 # Command to run the FastAPI tests
 CMD ["pytest"]
