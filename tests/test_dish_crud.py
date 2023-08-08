@@ -25,10 +25,6 @@ def db():
         db.close()
 
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 3aaf1ab8edb5112f9fedd91880c0ace36dfa60b0
 client = TestClient(app)
 
 menu_data = {'title': 'Sample Menu 1', 'description': 'Menu Description 1'}
